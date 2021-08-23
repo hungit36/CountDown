@@ -18,7 +18,7 @@ class CountTimeService: NSObject {
     }
     
     deinit {
-        timer.invalidate()
+        cancelCountTime()
     }
     
     enum WorkoutState {
@@ -57,6 +57,8 @@ class CountTimeService: NSObject {
     }
     
     func cancelCountTime() {
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
         timer.invalidate()
     }
     
@@ -72,7 +74,7 @@ class CountTimeService: NSObject {
                 updateTimeToUI(interval, String(format:"%02i:%02i:%02i", hours, minutes, seconds))
             }
         } else {
-            timer.invalidate()
+            cancelCountTime()
             if let completedCountTime = self.completedCountTime {
                 completedCountTime()
             }
