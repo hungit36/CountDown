@@ -104,7 +104,7 @@ class CountTimeService: NSObject {
             let timeRemaining = countTimeType == .increase ? interval : (totalTime - interval)
             currentTime = timeRemaining
             if let updateTimeToUI = self.updateTimeToUI {
-                updateTimeToUI(interval, convertTimeintervalToTImeString())
+                updateTimeToUI(currentTime, convertTimeintervalToTImeString())
             }
         } else {
             cancelCountTime()

@@ -38,6 +38,7 @@ class FirstViewController: UIViewController {
         CountTimeService.shared.updateTimeToUI = { [weak self] (interval, timeString) in
             guard let self = self else { return }
             self.timerLabel.text = timeString
+            print("interval: \(interval)")
         }
         CountTimeService.shared.completedCountTime = { [weak self] in
             self?.showAlert(title: "", message: "Completed CountTime!")
