@@ -43,13 +43,18 @@ class CountTimeService: NSObject {
     var updateTimeToUI: ((Int, String) -> Void)?
     var completedCountTime: (() -> Void)?
     
-    func registerListeningNotification(totalTime: Int = 60, countTimeType: CountTimeType = .reduced) {
+    func registerListeningNotification(totalTime: Int = 60, countTimeType: CountTimeType = .reduced, isStart: Bool = true) {
         self.totalTime = totalTime
         self.countTimeType = countTimeType
+        self.workoutInterval = 0.0
+        self.startDate = Date()
+        self.timer = Timer()
+        self.currentTime = 0
+        timer.invalidate()
         NotificationCenter.default.addObserver(self, selector: #selector(observerMethod), name: UIApplication.didEnterBackgroundNotification, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(observerMethod), name: UIApplication.didBecomeActiveNotification, object: nil)
-        timer.invalidate()
+        self.startCountTime()
     }
     
     func setTypeCountTime(countTimeType: CountTimeType = .reduced) {
