@@ -32,6 +32,12 @@ class CountTimeService: NSObject {
         case reduced
     }
     
+    enum TimeShowToUIType {
+        case full
+        case minute_second
+        case number
+    }
+    
     private var workoutState = WorkoutState.inactive
     private var workoutInterval = 0.0
     private var startDate = Date()
@@ -39,22 +45,23 @@ class CountTimeService: NSObject {
     private var countTimeType: CountTimeType = .reduced
     private var totalTime: Int = 60
     private var currentTime: Int = 0
+    private var timeShowToUIType : TimeShowToUIType = .full
     
     var updateTimeToUI: ((Int, String) -> Void)?
     var completedCountTime: (() -> Void)?
     
-    func registerListeningNotification(totalTime: Int = 60, countTimeType: CountTimeType = .reduced, isStart: Bool = true) {
+    func registerListeningNotification(totalTime: Int = 60, countTimeType: CountTimeType = .reduced, timeShowToUIType : TimeShowToUIType = .full) {
+        self.timeShowToUIType = timeShowToUIType
         self.totalTime = totalTime
         self.countTimeType = countTimeType
-        self.workoutInterval = 0.0
-        self.startDate = Date()
-        self.timer = Timer()
-        self.currentTime = 0
+        startDate = Date()
+        timer = Timer()
+        workoutInterval = 0.0
+        currentTime = 0
         timer.invalidate()
         NotificationCenter.default.addObserver(self, selector: #selector(observerMethod), name: UIApplication.didEnterBackgroundNotification, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(observerMethod), name: UIApplication.didBecomeActiveNotification, object: nil)
-        self.startCountTime()
     }
     
     func setTypeCountTime(countTimeType: CountTimeType = .reduced) {
@@ -67,16 +74,37 @@ class CountTimeService: NSObject {
         timer.invalidate()
     }
     
+    private func convertTimeintervalToTImeString() -> String {
+        guard currentTime >= 0 else {
+            switch timeShowToUIType {
+            case .number:
+                return ("00")
+            case .minute_second:
+                return ("00:00")
+            default:
+                return ("00:00:00")
+            }
+        }
+        let hours = currentTime / 3600
+        let minutes = currentTime / 60 % 60
+        let seconds = currentTime % 60
+        switch timeShowToUIType {
+        case .number:
+            return String(format:"%02i", currentTime)
+        case .minute_second:
+            return String(format:"%02i:%02i", minutes, seconds)
+        default:
+            return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
+        }
+    }
+    
     private func updateTimer() {
         let interval = -Int(startDate.timeIntervalSinceNow)
         if interval <= totalTime{
             let timeRemaining = countTimeType == .increase ? interval : (totalTime - interval)
             currentTime = timeRemaining
-            let hours = timeRemaining / 3600
-            let minutes = timeRemaining / 60 % 60
-            let seconds = timeRemaining % 60
             if let updateTimeToUI = self.updateTimeToUI {
-                updateTimeToUI(interval, String(format:"%02i:%02i:%02i", hours, minutes, seconds))
+                updateTimeToUI(interval, convertTimeintervalToTImeString())
             }
         } else {
             cancelCountTime()
@@ -87,13 +115,7 @@ class CountTimeService: NSObject {
     }
     
     func showCurrentTime() -> (time: Int, timeString: String) {
-        guard currentTime >= 0 else {
-            return (0,"00:00:00")
-        }
-        let hours = currentTime / 3600
-        let minutes = currentTime / 60 % 60
-        let seconds = currentTime % 60
-        return (currentTime, String(format:"%02i:%02i:%02i", hours, minutes, seconds))
+        return (currentTime, convertTimeintervalToTImeString())
     }
     
     func startCountTime() {
