@@ -30,7 +30,7 @@ class FirstViewController: UIViewController {
         timerLabel.text = "00:00:00"
         self.title = "CountTime Demo"
         paused.isHidden = true
-        CountTimeService.shared.registerListeningNotification(totolTime: 600)
+        CountTimeService.shared.registerListeningNotification(totalTime: 600)
     }
     
     override func viewWillAppear(_ animated: Bool) {

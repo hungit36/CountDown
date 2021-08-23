@@ -37,14 +37,14 @@ class CountTimeService: NSObject {
     private var startDate = Date()
     private var timer = Timer()
     private var countTimeType: CountTimeType = .reduced
-    private var totolTime: Int = 60
+    private var totalTime: Int = 60
     private var currentTime: Int = 0
     
     var updateTimeToUI: ((Int, String) -> Void)?
     var completedCountTime: (() -> Void)?
     
-    func registerListeningNotification(totolTime: Int = 60, countTimeType: CountTimeType = .reduced) {
-        self.totolTime = totolTime
+    func registerListeningNotification(totalTime: Int = 60, countTimeType: CountTimeType = .reduced) {
+        self.totalTime = totalTime
         self.countTimeType = countTimeType
         NotificationCenter.default.addObserver(self, selector: #selector(observerMethod), name: UIApplication.didEnterBackgroundNotification, object: nil)
 
@@ -62,8 +62,8 @@ class CountTimeService: NSObject {
     
     private func updateTimer() {
         let interval = -Int(startDate.timeIntervalSinceNow)
-        if interval <= totolTime{
-            let timeRemaining = countTimeType == .increase ? interval : (totolTime - interval)
+        if interval <= totalTime{
+            let timeRemaining = countTimeType == .increase ? interval : (totalTime - interval)
             currentTime = timeRemaining
             let hours = timeRemaining / 3600
             let minutes = timeRemaining / 60 % 60
