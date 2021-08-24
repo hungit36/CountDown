@@ -101,8 +101,7 @@ class CountTimeService: NSObject {
     private func updateTimer() {
         let interval = -Int(startDate.timeIntervalSinceNow)
         if interval <= totalTime{
-            let timeRemaining = countTimeType == .increase ? interval : (totalTime - interval)
-            currentTime = timeRemaining
+            currentTime = countTimeType == .increase ? interval : (totalTime - interval)
             if let updateTimeToUI = self.updateTimeToUI {
                 updateTimeToUI(currentTime, convertTimeintervalToTImeString())
             }
