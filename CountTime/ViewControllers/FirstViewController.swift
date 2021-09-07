@@ -59,15 +59,11 @@ class FirstViewController: UIViewController {
 
     @IBAction func pausedButton(_ sender: UIButton) {
         CountTimeService.shared.pausedCountTime()
-        pauseWorkout()
+        paused.isHidden = true
+        start.isHidden = false
     }
     
     @IBAction func nextScreen(_ sender: UIButton) {
         self.navigationController?.pushViewController(secondViewController, animated: true)
-    }
-
-    func pauseWorkout(){
-        paused.isHidden = true
-        start.isHidden = false
     }
 }
